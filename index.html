@@ -6,23 +6,35 @@
     <title>TiahMada - CyberHub</title>
     <!-- Import Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Import Fira Code font -->
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet">
     <style>
         /* General Styles */
         body {
             background: #000;
             color: #00FF00;
-            font-family: 'Courier New', monospace;
+            font-family: 'Fira Code', monospace;
             margin: 0;
             padding: 20px;
-            padding-top: 70px; /* Offset for fixed header height */
+            padding-top: 70px; /* Offset for fixed header */
+            overflow-x: hidden;
+        }
+        canvas#bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: -1; /* Behind content */
+            opacity: 0.2; /* Subtle effect */
         }
 
         /* Header */
         .header {
-            position: fixed; /* Fix header to top */
+            position: fixed;
             top: 0;
             left: 0;
             right: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px); /* Modern glass effect */
             border-bottom: 2px solid #800080;
             padding: 10px;
             display: flex;
@@ -30,13 +42,16 @@
             align-items: center;
             max-width: 800px;
             margin: 0 auto;
-            background: #000; /* Match body background */
-            z-index: 1000; /* Ensure it stays above content */
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(128, 0, 128, 0.5);
         }
         .logo span {
             color: #00FF00;
             font-size: 1.5em;
             text-shadow: 0 0 5px #00FF00;
+        }
+        .logo span:hover {
+            animation: glitch 0.5s infinite;
         }
         .menu ul {
             list-style: none;
@@ -48,11 +63,14 @@
             margin-left: 20px;
             color: #800080;
             cursor: pointer;
+            opacity: 0;
+            animation: slideIn 0.5s forwards;
         }
-        .menu-item:hover {
-            text-shadow: 0 0 5px #800080;
-            animation: glitch 0.3s infinite;
-        }
+        .menu-item:nth-child(1) { animation-delay: 0.1s; }
+        .menu-item:nth-child(2) { animation-delay: 0.2s; }
+        .menu-item:nth-child(3) { animation-delay: 0.3s; }
+        .menu-item:nth-child(4) { animation-delay: 0.4s; }
+
         @keyframes glitch {
             0% { transform: translate(0); }
             20% { transform: translate(-2px, 2px); }
@@ -61,14 +79,32 @@
             80% { transform: translate(2px, 0); }
             100% { transform: translate(0); }
         }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
         /* Terminal */
         .terminal {
-            border: 2px solid #800080;
+            border: 2px solid;
+            border-image: linear-gradient(to right, #00FF00, #800080) 1;
             padding: 20px;
             max-width: 800px;
             margin: 0 auto;
+            opacity: 0;
+            animation: fadeIn 0.5s forwards;
+            transition: all 0.3s;
         }
+        .terminal:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 15px #800080;
+        }
+        .terminal:nth-child(2) { animation-delay: 0.5s; } /* Login */
+        .terminal:nth-child(3) { animation-delay: 1s; }   /* Profile */
+        .terminal:nth-child(4) { animation-delay: 1.5s; } /* Home */
+        .terminal:nth-child(5) { animation-delay: 2s; }   /* Access Points */
+        .terminal:nth-child(6) { animation-delay: 2.5s; } /* Portfolio */
+        .terminal:nth-child(7) { animation-delay: 3s; }   /* Contact */
         .highlight {
             color: #800080;
             text-shadow: 0 0 5px #800080;
@@ -95,9 +131,32 @@
             height: 150px;
             max-width: 150px;
             transition: transform 0.3s;
+            position: relative;
         }
         .my-profile:hover {
-            transform: scale(1.05);
+            animation: glitchImage 0.5s infinite;
+        }
+        .my-profile::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(transparent, rgba(0, 255, 0, 0.1) 50%, transparent);
+            animation: scan 2s infinite;
+        }
+        @keyframes glitchImage {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(2px, -2px); }
+            60% { transform: translate(-2px, 0); }
+            80% { transform: translate(2px, 0); }
+            100% { transform: translate(0); }
+        }
+        @keyframes scan {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
         }
 
         /* Animations */
@@ -110,12 +169,33 @@
             from { width: 0; }
             to { width: 100%; }
         }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
         a {
             color: #800080;
             text-decoration: none;
+            position: relative;
         }
         a:hover {
             text-shadow: 0 0 5px #800080;
+        }
+        a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background: #800080;
+            transition: width 0.3s;
+        }
+        a:hover::after {
+            width: 100%;
         }
 
         /* Contact Icons */
@@ -125,6 +205,14 @@
             width: 20px;
             display: inline-block;
             text-align: center;
+        }
+        .contact-icon:hover {
+            animation: pulse 0.5s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
         }
 
         /* Footer */
@@ -160,6 +248,9 @@
     </style>
 </head>
 <body>
+    <!-- Background Canvas -->
+    <canvas id="bg-canvas"></canvas>
+
     <!-- Header -->
     <div class="header">
         <div class="logo">
@@ -176,7 +267,7 @@
     </div>
 
     <!-- Login Terminal -->
-    <div class="terminal" id="login">
+    <div class="terminal" id="home" id="login">
         <h2 class="typing" style="animation: type 2.5s steps(40, end) forwards;">> INITIALIZING TIAHMADA'S SYSTEM...</h2>
         <p>> Username:</p>
         <p class="typing" style="animation: type 2s steps(20, end) 2s forwards;">> <span class="highlight" style="padding-left: 2rem;">TiahMada</span></p>
@@ -198,7 +289,7 @@
     </div>
 
     <!-- Home Terminal -->
-    <div class="terminal" id="home" style="margin-top: 20px;">
+    <div class="terminal"  style="margin-top: 20px;">
         <p class="typing" style="animation: type 1s steps(20, end) 5s forwards;">> STATUS: ONLINE</p>
         <p class="typing" style="animation: type 1s steps(20, end) 6s forwards;">> WELCOME, USER.</p>
         
@@ -244,5 +335,33 @@
             </ul>
         </div>
     </div>
+
+    <!-- Background Animation Script -->
+    <script>
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        const particles = [];
+        for (let i = 0; i < 50; i++) {
+            particles.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                size: Math.random() * 2 + 1,
+                speed: Math.random() * 1 + 0.5
+            });
+        }
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#00FF00';
+            particles.forEach(p => {
+                ctx.fillRect(p.x, p.y, p.size, p.size);
+                p.y += p.speed;
+                if (p.y > canvas.height) p.y = 0;
+            });
+            requestAnimationFrame(animate);
+        }
+        animate();
+    </script>
 </body>
 </html>
